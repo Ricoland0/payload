@@ -1,11 +1,6 @@
 # Determine system language
 $language = (Get-Culture).TwoLetterISOLanguageName
 
-
-# Discord notification
-$webhookUrl = "https://discord.com/api/webhooks/ID_HERE"  # Ton URL de webhook Discord
-
-
 switch ($language) {
   'de' {
     # German
